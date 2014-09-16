@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">Lista empleados</ui:define>
+        <ui:define name="body">
+        <h1>Lista Empleados</h1>
+        <h:form>            
+            <p><p:button value="inicio" outcome="/index"/>
+                <p:commandButton value="Agregar Empleado" action="#{employeeController.prepareCreate}"/></p>
+
+            <p:dataTable value="#{employeeController.listaEmpleados}" var="employee"
+                          rows="10" id="employeeTable"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+                <p:column filterBy="#{employee.id}" headerText="Id" footerText="contains" filterMatchMode="contains">
+            <h:outputText value="#{employee.id}" />
+        </p:column>
+                
+                
+                 <p:column filterBy="#{employee.firstName}" headerText="FirstName" footerText="exact" filterMatchMode="exact">
+            <f:facet name="filter">
+                <p:selectOneMenu onchange="PF('carsTable').filter()" >
+                    <f:selectItem itemLabel="Select One" itemValue="#{null}" noSelectionOption="true" />
+                    <f:selectItems value="#{dtFilterView.firstname}" />
+                </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{employee.firstName}" />
+        </p:column>
+                
+                
+                 <p:column filterBy="#{employee.lastName}" headerText="lastName" footerText="exact" filterMatchMode="exact">
+            <f:facet name="filter">
+                <p:selectOneMenu onchange="PF('carsTable').filter()" >
+                    <f:selectItem itemLabel="Select One" itemValue="#{null}" noSelectionOption="true" />
+                    <f:selectItems value="#{dtFilterView.lastName}" />
+                </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{employee.lastName}" />
+        </p:column>
+                
+                
+                <p:column>
+                    <f:facet name="header">Fecha de nacimiento</f:facet>
+                    <h:outputText value="#{employee.birthDate}">
+                        <f:convertDateTime pattern="MMMM d, yyyy"/>
+                    </h:outputText>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">Salario</f:facet>
+                    <h:outputText value="#{employee.salary}">
+                        <f:convertNumber type="currency"/>
+                    </h:outputText>
+                </p:column>
+                <p:column>
+                    <p:commandButton icon="ui-icon-search" action="#{employeeController.prepareView()}">
+                        <f:setPropertyActionListener value="#{employee}" target="#{employeeController.empleadoActual}"/>
+                    </p:commandButton>
+
+                    <p:commandButton icon="pencil" action="#{employeeController.prepareEdit()}">
+                        <f:setPropertyActionListener value="#{employee}" target="#{employeeController.empleadoActual}"/>
+                    </p:commandButton>
+
+                    <p:commandButton icon="ui-icon-trash" action="#{employeeController.deleteteEmployee()}"
+                                     process="@this" update="employeeTable">
+                        <p:confirm header="Confirmación" message="¿Esta seguro que desea eliminar el empleado?" icon="ui-icon-alert" />
+                        <f:setPropertyActionListener value="#{employee}" target="#{employeeController.empleadoActual}"/>
+                       
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    
+        </ui:define>
+    </ui:composition>
+</html>
+
